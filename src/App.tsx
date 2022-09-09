@@ -1,8 +1,22 @@
-import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { ObliviousQueryClient } from './proto/oblivious_grpc_web_pb';
+import s from './proto/oblivious_pb';
+
+export const client = new ObliviousQueryClient('http://localhost:8081', null, null);
 
 function App() {
+  const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest({
+      chain_id: 'penumbra-testnet-harpalyke',
+      end_height: '1000',
+      keep_alive: false,
+      start_height: '1',
+  });
+  console.log(compactBlockRangeRequest);
+
+
+  client.compactBlockRange(compactBlockRangeRequest);
+
   return (
     <div className="App">
       <header className="App-header">
