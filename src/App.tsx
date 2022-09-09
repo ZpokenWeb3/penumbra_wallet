@@ -1,7 +1,5 @@
-import logo from './logo.svg';
-import './App.css';
 import { ObliviousQueryClient } from './proto/oblivious_grpc_web_pb';
-import s from './proto/oblivious_pb';
+import Oblivious from './proto/oblivious_pb';
 import { useEffect } from 'react';
 
 export const client = new ObliviousQueryClient(
@@ -11,52 +9,60 @@ export const client = new ObliviousQueryClient(
 );
 
 function App() {
-  const getBlock = () => {
-    // const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest({
-    //   chain_id: 'penumbra-testnet-harpalyke',
-    //   end_height: '20',
-    //   keep_alive: false,
-    //   start_height: '10',
-    // });
-    const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest();
+  const getCompactBlockRange = () => {
+    const compactBlockRangeRequest = new (
+      Oblivious as any
+    ).CompactBlockRangeRequest();
     compactBlockRangeRequest.setChainId('penumbra-testnet-harpalyke');
     compactBlockRangeRequest.setStartHeight(20);
     compactBlockRangeRequest.setEndHeight(30);
     compactBlockRangeRequest.setKeepAlive(false);
 
-    console.log({compactBlockRangeRequest});
-
     const stream = client.compactBlockRange(compactBlockRangeRequest);
-    stream.on('data', (response: any) => {
-      console.log(response);
+
+    stream.on('error', (error: any) => {
+      console.log({ error });
     });
 
-    // stream.on('end',  () => {
-    //   stream.end();
-    // });
+    stream.on('data', (res: any) => {
+      const height = res.getHeight();
+      const notePayloads = res.getNotePayloadsList();
+      const nullifiers = res.getNullifiersList();
+      const blockRoot = res.getBlockRoot();
+      const epochRoot = res.getEpochRoot();
+      const quarantined = res.getQuarantined();
+      const slashed = res.getSlashedList();
+      const proposalStarted = res.getProposalStarted();
+      const fmdParameters = res.getFmdParameters();
+
+      console.log({
+        height,
+        nullifiers,
+        notePayloads,
+        blockRoot,
+        epochRoot,
+        quarantined,
+        slashed,
+        proposalStarted,
+        fmdParameters,
+      });
+    });
+
+    stream.on('status', (status: any) => {
+      console.log(status);
+    });
+
+    stream.on('end', () => {
+      console.log('stream ended!');
+    });
   };
 
   useEffect(() => {
-    getBlock();
+    getCompactBlockRange();
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <div>Stream</div>
   );
 }
 
