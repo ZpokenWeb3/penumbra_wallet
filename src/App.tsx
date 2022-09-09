@@ -1,6 +1,8 @@
 import { ObliviousQueryClient } from './proto/oblivious_grpc_web_pb';
-import Oblivious from './proto/oblivious_pb';
+import { CompactBlockRangeRequest } from './proto/oblivious_pb';
 import { useEffect } from 'react';
+import { CompactBlock } from './proto/chain_pb';
+import { ServiceError } from 'grpc';
 
 export const client = new ObliviousQueryClient(
   'http://localhost:8080',
@@ -10,9 +12,7 @@ export const client = new ObliviousQueryClient(
 
 function App() {
   const getCompactBlockRange = () => {
-    const compactBlockRangeRequest = new (
-      Oblivious as any
-    ).CompactBlockRangeRequest();
+    const compactBlockRangeRequest = new CompactBlockRangeRequest();
     compactBlockRangeRequest.setChainId('penumbra-testnet-harpalyke');
     compactBlockRangeRequest.setStartHeight(20);
     compactBlockRangeRequest.setEndHeight(30);
@@ -20,11 +20,11 @@ function App() {
 
     const stream = client.compactBlockRange(compactBlockRangeRequest);
 
-    stream.on('error', (error: any) => {
+    stream.on('error', (error: ServiceError | null) => {
       console.log({ error });
     });
 
-    stream.on('data', (res: any) => {
+    stream.on('data', (res: CompactBlock) => {
       const height = res.getHeight();
       const notePayloads = res.getNotePayloadsList();
       const nullifiers = res.getNullifiersList();
@@ -48,10 +48,6 @@ function App() {
       });
     });
 
-    stream.on('status', (status: any) => {
-      console.log(status);
-    });
-
     stream.on('end', () => {
       console.log('stream ended!');
     });
@@ -61,9 +57,7 @@ function App() {
     getCompactBlockRange();
   }, []);
 
-  return (
-   <div>Stream</div>
-  );
+  return <div>Stream GRPC</div>;
 }
 
 export default App;
