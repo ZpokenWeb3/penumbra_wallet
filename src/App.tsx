@@ -2,7 +2,7 @@ import { ObliviousQueryClient } from './proto/oblivious_grpc_web_pb';
 import { CompactBlockRangeRequest } from './proto/oblivious_pb';
 import { useEffect } from 'react';
 import { CompactBlock } from './proto/chain_pb';
-import * as grpc from 'grpc';
+import { ServiceError } from 'grpc';
 
 export const client = new ObliviousQueryClient(
   'http://localhost:8081',
@@ -20,7 +20,7 @@ function App() {
 
     const stream = client.compactBlockRange(compactBlockRangeRequest);
 
-    stream.on('error', (error: grpc.ServiceError | null) => {
+    stream.on('error', (error: ServiceError | null) => {
       console.log({ error });
     });
 
