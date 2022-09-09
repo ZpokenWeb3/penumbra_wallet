@@ -5,7 +5,7 @@ import s from './proto/oblivious_pb';
 import { useEffect } from 'react';
 
 export const client = new ObliviousQueryClient(
-  'http://localhost:8081',
+  'http://localhost:8080',
   null,
   null
 );
