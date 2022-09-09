@@ -2,20 +2,43 @@ import logo from './logo.svg';
 import './App.css';
 import { ObliviousQueryClient } from './proto/oblivious_grpc_web_pb';
 import s from './proto/oblivious_pb';
+import { useEffect } from 'react';
 
-export const client = new ObliviousQueryClient('http://localhost:8081', null, null);
+export const client = new ObliviousQueryClient(
+  'http://localhost:8081',
+  null,
+  null
+);
 
 function App() {
-  const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest({
-      chain_id: 'penumbra-testnet-harpalyke',
-      end_height: '1000',
-      keep_alive: false,
-      start_height: '1',
-  });
-  console.log(compactBlockRangeRequest);
+  const getBlock = () => {
+    // const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest({
+    //   chain_id: 'penumbra-testnet-harpalyke',
+    //   end_height: '20',
+    //   keep_alive: false,
+    //   start_height: '10',
+    // });
+    const compactBlockRangeRequest = new (s as any).CompactBlockRangeRequest();
+    compactBlockRangeRequest.setChainId('penumbra-testnet-harpalyke');
+    compactBlockRangeRequest.setStartHeight(20);
+    compactBlockRangeRequest.setEndHeight(30);
+    compactBlockRangeRequest.setKeepAlive(false);
 
+    console.log({compactBlockRangeRequest});
 
-  client.compactBlockRange(compactBlockRangeRequest);
+    const stream = client.compactBlockRange(compactBlockRangeRequest);
+    stream.on('data', (response: any) => {
+      console.log(response);
+    });
+
+    // stream.on('end',  () => {
+    //   stream.end();
+    // });
+  };
+
+  useEffect(() => {
+    getBlock();
+  }, []);
 
   return (
     <div className="App">
