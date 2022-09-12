@@ -1,6 +1,13 @@
 {
   "short_name": "React App",
   "name": "Create React App Sample",
+  "description": "The power of React and TypeScript for building interactive Chrome extensions",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+       "default_popup": "index.html",
+       "default_title": "Open the popup"
+   },
   "icons": [
     {
       "src": "favicon.ico",
