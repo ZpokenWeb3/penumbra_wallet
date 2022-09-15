@@ -11,3 +11,10 @@ you need to add penumbra in other directory
 start tendermint
 
 1. tendermint start --home ~/.penumbra/testnet_data/node0/tendermint
+
+
+dev
+yarn start
+
+prod 
+yarn build

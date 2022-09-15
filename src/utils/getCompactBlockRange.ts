@@ -14,9 +14,9 @@ export const client = new ObliviousQueryClient(
 export const getCompactBlockRange = () => {
   const compactBlockRangeRequest = new CompactBlockRangeRequest();
   compactBlockRangeRequest.setChainId('penumbra-testnet-harpalyke');
-  compactBlockRangeRequest.setStartHeight(20);
-  compactBlockRangeRequest.setEndHeight(30);
-  compactBlockRangeRequest.setKeepAlive(false);
+  compactBlockRangeRequest.setStartHeight(1);
+  // compactBlockRangeRequest.setEndHeight(33444);
+  compactBlockRangeRequest.setKeepAlive(true);
 
   const stream = client.compactBlockRange(compactBlockRangeRequest);
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
 import { getCompactBlockRange } from '../utils/getCompactBlockRange';
 
@@ -7,7 +7,7 @@ const App: React.FC<{}> = () => {
     getCompactBlockRange();
   }, []);
 
-  return <div>Popup Page</div>;
+  return null;
 };
 
 const div = document.createElement('div');

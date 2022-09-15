@@ -25,5 +25,9 @@
     ],
     "permissions": [
             "storage", "tabCapture", "alarms", "notifications"
-    ]
+    ],
+    "web_accessible_resources" : [{
+   "resources": [ "css/*", "content/*" ],
+   "matches": ["<all_urls>"]
+ }]
 }
