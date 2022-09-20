@@ -1,0 +1,460 @@
+syntax = "proto3";
+package penumbra.transaction;
+option go_package = "github.com/penumbra-zone/penumbra/proto/go-proto";
+
+import "crypto.proto";
+import "stake.proto";
+import "ibc.proto";
+import "dex.proto";
+import "governance.proto";
+
+// An authorization hash for a Penumbra transaction.
+message AuthHash {
+  bytes inner = 1;
+}
+
+// A Penumbra transaction.
+message Transaction {
+  TransactionBody body = 1;
+  // The binding signature is stored separately from the transaction body that it signs.
+  bytes binding_sig = 2;
+  // The root of some previous state of the note commitment tree, used as an anchor for all
+  // ZK state transition proofs.
+  crypto.MerkleRoot anchor = 3;
+}
+
+// The body of a transaction.
+message TransactionBody {
+  // A list of actions (state changes) performed by this transaction.
+  repeated Action actions = 1;
+  // The maximum height that this transaction can be included in the chain.
+  //
+  // If zero, there is no maximum.
+  uint64 expiry_height = 2;
+  // The chain this transaction is intended for.  Including this prevents
+  // replaying a transaction on one chain onto a different chain.
+  string chain_id = 3;
+  // The transaction fee.
+  crypto.Fee fee = 4;
+  // A list of clues for use with Fuzzy Message Detection.
+  repeated crypto.Clue fmd_clues = 5;
+  // An optional encrypted memo. It will only be populated if there are
+  // outputs in the actions of this transaction. 528 bytes.
+  optional bytes encrypted_memo = 6;
+}
+
+// A state change performed by a transaction.
+message Action {
+  oneof action {
+    Spend spend = 1;
+    Output output = 2;
+    stake.Delegate delegate = 3;
+    stake.Undelegate undelegate = 4;
+    dex.Swap swap = 5;
+    dex.SwapClaim swap_claim = 6;
+
+    stake.ValidatorDefinition validator_definition = 16;
+    ibc.IBCAction ibc_action = 17;
+
+    // Governance:
+    ProposalSubmit proposal_submit = 18;
+    ProposalWithdraw proposal_withdraw = 19;
+    ValidatorVote validator_vote = 20;
+    // DelegatorVote delegator_vote = 21;
+
+    dex.PositionOpen position_open = 30;
+    dex.PositionClose position_close = 31;
+    dex.PositionWithdraw position_withdraw = 32;
+    dex.PositionRewardClaim position_reward_claim = 34;
+
+    ibc.ICS20Withdrawal ics20_withdrawal = 200;
+
+  }
+}
+
+// Spends a shielded note.
+message Spend {
+  // The authorizing data for the spend, which is included in the authorization hash used for signing.
+  SpendBody body = 1;
+  // The spend authorization signature is effecting data.
+  crypto.SpendAuthSignature auth_sig = 2;
+  // The spend proof is effecting data.
+  bytes proof = 3;
+}
+
+// The body of a spend description, containing only the "authorizing" data
+// included in the authorization hash used for signing, and not the "effecting"
+// data which is bound to the authorizing data by some other means.
+message SpendBody {
+  // A commitment to the value of the input note.
+  crypto.ValueCommitment value_commitment = 1;
+  // The nullifier of the input note.
+  bytes nullifier = 3;
+  // The randomized validating key for the spend authorization signature.
+  bytes rk = 4;
+}
+
+// Creates a new shielded note.
+message Output {
+  // The authorizing data for the output.
+  OutputBody body = 1;
+  // The output proof is effecting data.
+  bytes proof = 2;
+}
+
+// The body of an output description, containing only the "authorizing" data
+// included in the authorization hash used for signing, and not the "effecting"
+// data which is bound to the authorizing data by some other means.
+message OutputBody {
+  // The minimal data required to scan and process the new output note.
+  crypto.NotePayload note_payload = 1;
+  // A commitment to the value of the output note. 32 bytes.
+  crypto.ValueCommitment value_commitment = 2;
+  // An encrypted key for decrypting the memo.
+  bytes wrapped_memo_key = 3;
+  // The key material used for note encryption, wrapped in encryption to the
+  // sender's outgoing viewing key. 80 bytes.
+  bytes ovk_wrapped_key = 4;
+}
+
+message ProposalSubmit {
+  // The proposal to be submitted.
+  Proposal proposal = 1;
+  // The ephemeral transparent refund address for the refund of the proposal deposit.
+  crypto.Address deposit_refund_address = 2;
+  // The amount of the proposal deposit.
+  uint64 deposit_amount = 3;
+  // The randomized proposer key (a randomization of the proposer's spend verification key).
+  bytes rk = 4;
+}
+
+message ProposalWithdraw {
+  // The body of the proposal withdraw message.
+  ProposalWithdrawBody body = 1;
+  // The signature with the randomized proposer key of the withdrawal.
+  crypto.SpendAuthSignature auth_sig = 2;
+}
+
+message ProposalWithdrawBody {
+  // The proposal to be withdrawn.
+  uint64 proposal = 1;
+  // The reason for the proposal being withdrawn.
+  string reason = 2;
+}
+
+message ValidatorVote {
+  // The authorizing data for the vote.
+  ValidatorVoteBody body = 1;
+  // The vote authorization signature is effecting data.
+  crypto.SpendAuthSignature auth_sig = 2;
+}
+
+message ValidatorVoteBody {
+  // The proposal being voted on.
+  uint64 proposal = 1;
+  // The vote.
+  governance.Vote vote = 2;
+  // The validator identity.
+  crypto.IdentityKey identity_key = 3;
+  // The validator governance key.
+  crypto.GovernanceKey governance_key = 4;
+}
+
+message DelegatorVote {
+  // The authorizing data for the vote, which is included in the authorization hash used for signing.
+  DelegatorVoteBody body = 1;
+  // The vote authorization signature is effecting data.
+  crypto.SpendAuthSignature auth_sig = 2;
+  // The vote proof is effecting data.
+  bytes proof = 3;
+}
+
+message DelegatorVoteBody {
+  // The proposal being voted on.
+  uint64 proposal = 1;
+  // The nullifier of the input note.
+  bytes nullifier = 3;
+  // The randomized validating key for the spend authorization signature.
+  bytes rk = 4;
+  // A commitment to the value voted for "yes".
+  //
+  // A rational voter will place all their voting weight on one vote.
+  crypto.ValueCommitment yes_value_commitment = 5;
+  // A commitment to the value voted for "no".
+  //
+  // A rational voter will place all their voting weight on one vote.
+  crypto.ValueCommitment no_value_commitment = 6;
+  // A commitment to the value voted for "abstain".
+  //
+  // A rational voter will place all their voting weight on one vote.
+  crypto.ValueCommitment abstain_value_commitment = 7;
+  // A commitment to the value voted for "no with veto".
+  //
+  // A rational voter will place all their voting weight on one vote.
+  crypto.ValueCommitment no_with_veto_value_commitment = 8;
+}
+
+// The data required to authorize a transaction plan.
+message AuthorizationData {
+    // The computed auth hash for the approved transaction plan.
+    transaction.AuthHash auth_hash = 1;
+    // The required spend authorizations, returned in the same order as the
+    // Spend actions in the original request.
+    repeated crypto.SpendAuthSignature spend_auths = 2;
+    // The required withdraw proposal authorizations, returned in the same order as the
+    // ProposalWithdraw actions in the original request.
+    repeated crypto.SpendAuthSignature withdraw_proposal_auths = 3;
+}
+
+// The data required for proving when building a transaction from a plan.
+message WitnessData {
+  // The anchor for the state transition proofs.
+  crypto.MerkleRoot anchor = 1;
+  // The auth paths for the notes the transaction spends, in the
+  // same order as the spends in the transaction plan.
+  repeated crypto.NoteCommitmentProof note_commitment_proofs = 2;
+}
+
+// Describes a planned transaction.
+message TransactionPlan {
+    repeated ActionPlan actions = 1;
+    uint64 expiry_height = 2;
+    string chain_id = 3;
+    crypto.Fee fee = 4;
+    repeated CluePlan clue_plans = 5;
+    MemoPlan memo_plan = 6;
+}
+
+// Describes a planned transaction action.
+//
+// Some transaction Actions don't have any private data and are treated as being plans
+// themselves.
+message ActionPlan {
+    oneof action {
+        SpendPlan spend = 1;
+        OutputPlan output = 2;
+        // We don't need any extra information (yet) to understand delegations,
+        // because we don't yet use flow encryption.
+        stake.Delegate delegate = 3;
+        // We don't need any extra information (yet) to understand undelegations,
+        // because we don't yet use flow encryption.
+        stake.Undelegate undelegate = 4;
+        // This is just a message relayed to the chain.
+        stake.ValidatorDefinition validator_definition = 16;
+        // This is just a message relayed to the chain.
+        ibc.IBCAction ibc_action = 17;
+        // Governance:
+        ProposalSubmit proposal_submit = 18;
+        ProposalWithdrawPlan proposal_withdraw = 19;
+        ValidatorVote validator_vote = 20;
+        DelegatorVotePlan delegator_vote = 21;
+
+        dex.PositionOpen position_open = 30;
+        dex.PositionClose position_close = 31;
+        dex.PositionWithdraw position_withdraw = 32;
+        dex.PositionRewardClaim position_reward_claim = 34;
+
+        SwapPlan swap = 40;
+        SwapClaimPlan swap_claim = 41;
+    }
+}
+
+// Describes a plan for forming a `Clue`.
+message CluePlan {
+  // The address.
+  crypto.Address address = 1;
+  // The random seed to use for the clue plan.
+  bytes rseed = 2;
+  // The bits of precision.
+  uint64 precision_bits = 3;
+}
+
+// Describes a plan for forming a `Memo`.
+message MemoPlan {
+  // The plaintext.
+  bytes plaintext = 1;
+  // The key to use to encrypt the memo.
+  bytes key = 2;
+}
+
+message SpendPlan {
+    // The plaintext note we plan to spend.
+    crypto.Note note = 1;
+    // The position of the note we plan to spend.
+    uint64 position = 2;
+    // The randomizer to use for the spend.
+    bytes randomizer = 3;
+    // The blinding factor to use for the value commitment.
+    bytes value_blinding = 4;
+}
+
+message OutputPlan {
+    // The value to send to this output.
+    crypto.Value value = 1;
+    // The destination address to send it to.
+    crypto.Address dest_address = 2;
+    // The blinding factor to use for the new note.
+    bytes note_blinding = 3;
+    // The blinding factor to use for the value commitment.
+    bytes value_blinding = 4;
+    // The ephemeral secret key to use for the note encryption.
+    bytes esk = 5;
+}
+
+message SwapPlan {
+    // The plaintext version of the swap to be performed.
+    dex.SwapPlaintext swap_plaintext = 1;
+    // The blinding factor for the fee commitment. The fee in the SwapPlan is private to prevent linkability with the SwapClaim.
+    bytes fee_blinding = 5;
+    // The blinding factor to use for the new swap NFT note.
+    bytes note_blinding = 7;
+    // The ephemeral secret key to use for the swap NFT note encryption.
+    bytes esk = 8;
+}
+
+message SwapClaimPlan {
+    /*
+     * @exclude
+     * Fields describing the swap NFT note to be redeemed.
+     */
+    // The input swap NFT note to be spent.
+    crypto.Note swap_nft_note = 1;
+    // The position of the input swap NFT note.
+    uint64 swap_nft_position = 2;
+    // The plaintext version of the swap to be performed.
+    dex.SwapPlaintext swap_plaintext = 3;
+
+    // Input and output amounts for the Swap.
+    dex.BatchSwapOutputData output_data = 11;
+    // The blinding factor used for the first output note.
+    bytes output_1_blinding = 15;
+    // The blinding factor used for the second output note.
+    bytes output_2_blinding = 16;
+    // The ephemeral secret key used for the first output note encryption.
+    bytes esk_1 = 17;
+    // The ephemeral secret key used for the second output note encryption.
+    bytes esk_2 = 18;
+    
+    // The epoch duration when the swap claim took place.
+    uint64 epoch_duration = 20;
+}
+
+message ProposalWithdrawPlan {
+    // The body of the proposal withdrawal.
+    ProposalWithdrawBody body = 1;
+    // The randomizer to use for signing the proposal withdrawal.
+    bytes randomizer = 2;
+}
+
+message DelegatorVotePlan {
+    // The proposal to vote on.
+    uint64 proposal = 1;
+    // The vote to cast.
+    governance.Vote vote = 2;
+    // The delegation note to prove that we can vote.
+    crypto.Note staked_note = 3;
+    // The position of that delegation note.
+    uint64 position = 4;
+    // The randomizer to use for the proof of spend capability.
+    bytes randomizer = 5;
+}
+
+// The reader may ask: why is this here, instead of in a separate `governance.proto` file? It should
+// be, but protos can't have cyclic file dependencies, and most of the below induces a cycle
+// because `DaoSpend` contains a `TransactionPlan`.
+
+// A proposal to be voted upon.
+message Proposal {
+  string title = 1;
+
+  // A natural-language description of the effect of the proposal and its justification.
+  string description = 2;
+
+  // The kind of the proposal and details relevant only to that kind of proposal.
+  message Payload {
+    oneof payload {
+      // A signaling proposal.
+      Signaling signaling = 2;
+      // An emergency proposal.
+      Emergency emergency = 3;
+      // A parameter change proposal.
+      ParameterChange parameter_change = 4;
+      // A DAO spend proposal.
+      DaoSpend dao_spend = 5;
+    }
+  }
+
+  // The payload of the proposal.
+  Payload payload = 3;
+
+  // A signaling proposal is meant to register a vote on-chain, but does not have an automatic
+  // effect when passed.
+
+  // It optionally contains a reference to a commit which contains code to upgrade the chain.
+  message Signaling {
+    // The commit to be voted upon, if any is relevant.
+    optional string commit = 1;
+  }
+
+  // An emergency proposal can be passed instantaneously by a 2/3 majority of validators, without
+  // waiting for the voting period to expire.
+  //
+  // If the boolean `halt_chain` is set to `true`, then the chain will halt immediately when the
+  // proposal is passed.
+  message Emergency {
+    // If `true`, the chain will halt immediately when the proposal is passed.
+    bool halt_chain = 1;
+  }
+
+  // A parameter change proposal describes an alteration to one or more chain parameters, which
+  // should take effect at a particular block height `effective_height` (which should be at least
+  // the height when the proposal would be passed).
+  message ParameterChange {
+    // The height at which the change should take effect.
+    uint64 effective_height = 1;
+
+    // The set of changes to chain parameters.
+    repeated SetParameter new_parameters = 2;
+
+    // A single change to an individual chain parameter.
+    message SetParameter {
+      // The name of the parameter.
+      string parameter = 1;
+      // Its new value, as a string (this will be parsed as appropriate for the parameter's type).
+      string value = 2;
+    }
+  }
+
+  // A DAO spend proposal describes zero or more transactions to execute on behalf of the DAO, with
+  // access to its funds, and zero or more scheduled transactions from previous passed proposals to
+  // cancel.
+  message DaoSpend {
+    // The sequence of transactions to schedule for execution.
+    repeated ScheduleTransaction schedule_transactions = 1;
+
+    // A sequence of previously-scheduled transactions to cancel before they are executed.
+    repeated CancelTransaction cancel_transactions = 2;
+
+    // A transaction to be executed as a consequence of this proposal.
+    //
+    // It is permissible for there to be duplicate transactions scheduled for a given height; they
+    // will both be executed.
+    message ScheduleTransaction {
+      // The height at which the transaction should be executed.
+      uint64 execute_at_height = 1;
+      // The transaction to be executed.
+      TransactionPlan transaction = 2;
+    }
+
+    // A transaction to be canceled as a consequence of this proposal.
+    //
+    // If there are multiple duplicate transactions at the height, this cancels only the first.
+    // To cancel more of them, specify duplicate cancellations.
+    message CancelTransaction {
+      // The height for which the transaction was scheduled.
+      uint64 scheduled_at_height = 1;
+      // The auth hash of the transaction to cancel.
+      AuthHash auth_hash = 2;
+    }
+  }
+}

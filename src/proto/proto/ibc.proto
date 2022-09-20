@@ -1,0 +1,106 @@
+syntax = "proto3";
+option go_package = "github.com/penumbra-zone/penumbra/proto/go-proto";
+
+import "ibc/core/connection/v1/tx.proto";
+import "ibc/core/connection/v1/connection.proto";
+
+import "ibc/core/channel/v1/tx.proto";
+
+import "ibc/core/client/v1/tx.proto";
+import "ibc/core/client/v1/client.proto";
+import "crypto.proto";
+
+import "google/protobuf/any.proto";
+
+package penumbra.ibc;
+
+message IBCAction {
+    oneof action {
+      .ibc.core.connection.v1.MsgConnectionOpenInit connectionOpenInit = 1;
+      .ibc.core.connection.v1.MsgConnectionOpenTry connectionOpenTry = 2;
+      .ibc.core.connection.v1.MsgConnectionOpenAck connectionOpenAck = 3;
+      .ibc.core.connection.v1.MsgConnectionOpenConfirm connectionOpenConfirm = 4;
+
+      .ibc.core.channel.v1.MsgChannelOpenInit channelOpenInit = 5;
+      .ibc.core.channel.v1.MsgChannelOpenTry channelOpenTry = 6;
+      .ibc.core.channel.v1.MsgChannelOpenAck channelOpenAck = 7;
+      .ibc.core.channel.v1.MsgChannelOpenConfirm channelOpenConfirm = 8;
+      .ibc.core.channel.v1.MsgChannelCloseInit channelCloseInit = 9;
+      .ibc.core.channel.v1.MsgChannelCloseConfirm channelCloseConfirm = 10;
+      
+      .ibc.core.channel.v1.MsgRecvPacket recvPacket = 11;
+      .ibc.core.channel.v1.MsgTimeout timeout = 12;
+      .ibc.core.channel.v1.MsgAcknowledgement acknowledgement = 13;
+
+      .ibc.core.client.v1.MsgCreateClient createClient = 14;
+      .ibc.core.client.v1.MsgUpdateClient updateClient = 15;
+      .ibc.core.client.v1.MsgUpgradeClient upgradeClient = 16;
+      .ibc.core.client.v1.MsgSubmitMisbehaviour submitMisbehaviour = 17;
+  }
+}
+
+// FungibleTokenPacketData defines a struct for the packet payload
+// See FungibleTokenPacketData spec:
+// https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#data-structures
+message FungibleTokenPacketData {
+  // the token denomination to be transferred
+  string denom = 1;
+  // the token amount to be transferred
+  string amount = 2;
+  // the sender address
+  string sender = 3;
+  // the recipient address on the destination chain
+  string receiver = 4;
+}
+
+message ICS20Withdrawal {
+  // the chain ID of the destination chain for this ICS20 transfer
+  string destination_chain_id = 1;
+
+  // a transparent value consisting of an amount and an asset ID.
+  crypto.Value value = 2;
+
+  // the address on the destination chain to send the transfer to 
+  string destination_chain_address = 3;
+
+  // a "sender" penumbra address to use to return funds from this withdrawal.
+  // this should be an ephemeral address
+  crypto.Address return_address = 5;
+
+  // the height (on Penumbra) at which this transfer expires (and funds are sent
+  // back to the sender address?). NOTE: if funds are sent back to the sender,
+  // we MUST verify a nonexistence proof before accepting the timeout, to
+  // prevent relayer censorship attacks. The core IBC implementation does this
+  // in its handling of validation of timeouts.
+  uint64 timeout_height = 6;
+
+  // the timestamp at which this transfer expires.
+  uint64 timeout_time = 7;
+}
+
+message ClientData {
+  string clientID = 1;
+  google.protobuf.Any clientState = 2; // NOTE: left as Any to allow us to add more client types later
+  string processedTime = 3;
+  uint64 processedHeight = 4;
+}
+
+message ClientCounter {
+  uint64 counter = 1;
+}
+
+message ConsensusState {
+  google.protobuf.Any consensusState = 1;
+}
+
+message VerifiedHeights {
+  repeated .ibc.core.client.v1.Height heights = 1; 
+}
+
+message ConnectionCounter {
+  uint64 counter = 1;
+}
+
+message ClientConnections {
+  repeated string connections = 1;
+}
