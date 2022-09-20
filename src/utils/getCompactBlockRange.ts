@@ -1,9 +1,8 @@
-import { ServiceError } from 'grpc';
-import { CompactBlock } from '../proto/chain_pb';
-import {
-  CompactBlockRangeRequest,
-  ObliviousQueryClient,
-} from '../proto/oblivious_grpc_web_pb';
+
+import { ObliviousQueryClient } from '../proto/ObliviousServiceClientPb';
+import { CompactBlockRangeRequest } from '../proto/oblivious_pb';
+
+
 
 export const client = new ObliviousQueryClient(
   'http://localhost:8080',
@@ -20,11 +19,7 @@ export const getCompactBlockRange = () => {
 
   const stream = client.compactBlockRange(compactBlockRangeRequest);
 
-  stream.on('error', (error: ServiceError | null) => {
-    console.log({ error });
-  });
-
-  stream.on('data', (res: CompactBlock) => {
+  stream.on('data', (res: any) => {
     const height = res.getHeight();
     const notePayloads = res.getNotePayloadsList();
     const nullifiers = res.getNullifiersList();

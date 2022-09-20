@@ -1,4 +1,4 @@
-// source: client/oblivious.proto
+// source: oblivious.proto
 /**
  * @fileoverview
  * @enhanceable

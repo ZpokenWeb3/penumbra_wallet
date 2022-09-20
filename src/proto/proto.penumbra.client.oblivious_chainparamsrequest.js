@@ -1,4 +1,4 @@
-// source: client/oblivious.proto
+// source: oblivious.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -11,7 +11,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-goog.provide('proto.penumbra.client.oblivious.ValidatorInfoRequest');
+goog.provide('proto.penumbra.client.oblivious.ChainParamsRequest');
 
 goog.require('jspb.BinaryReader');
 goog.require('jspb.BinaryWriter');
@@ -27,16 +27,16 @@ goog.require('jspb.Message');
  * @extends {jspb.Message}
  * @constructor
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest = function(opt_data) {
+proto.penumbra.client.oblivious.ChainParamsRequest = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.penumbra.client.oblivious.ValidatorInfoRequest, jspb.Message);
+goog.inherits(proto.penumbra.client.oblivious.ChainParamsRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
   /**
    * @public
    * @override
    */
-  proto.penumbra.client.oblivious.ValidatorInfoRequest.displayName = 'proto.penumbra.client.oblivious.ValidatorInfoRequest';
+  proto.penumbra.client.oblivious.ChainParamsRequest.displayName = 'proto.penumbra.client.oblivious.ChainParamsRequest';
 }
 
 
@@ -54,8 +54,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.penumbra.client.oblivious.ValidatorInfoRequest.toObject(opt_includeInstance, this);
+proto.penumbra.client.oblivious.ChainParamsRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.penumbra.client.oblivious.ChainParamsRequest.toObject(opt_includeInstance, this);
 };
 
 
@@ -64,14 +64,13 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.toObject = functi
  * @param {boolean|undefined} includeInstance Deprecated. Whether to include
  *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.penumbra.client.oblivious.ValidatorInfoRequest} msg The msg instance to transform.
+ * @param {!proto.penumbra.client.oblivious.ChainParamsRequest} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.toObject = function(includeInstance, msg) {
+proto.penumbra.client.oblivious.ChainParamsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    chainId: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    showInactive: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    chainId: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -85,23 +84,23 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.toObject = function(include
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.penumbra.client.oblivious.ValidatorInfoRequest}
+ * @return {!proto.penumbra.client.oblivious.ChainParamsRequest}
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.deserializeBinary = function(bytes) {
+proto.penumbra.client.oblivious.ChainParamsRequest.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.penumbra.client.oblivious.ValidatorInfoRequest;
-  return proto.penumbra.client.oblivious.ValidatorInfoRequest.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.penumbra.client.oblivious.ChainParamsRequest;
+  return proto.penumbra.client.oblivious.ChainParamsRequest.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.penumbra.client.oblivious.ValidatorInfoRequest} msg The message object to deserialize into.
+ * @param {!proto.penumbra.client.oblivious.ChainParamsRequest} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.penumbra.client.oblivious.ValidatorInfoRequest}
+ * @return {!proto.penumbra.client.oblivious.ChainParamsRequest}
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.deserializeBinaryFromReader = function(msg, reader) {
+proto.penumbra.client.oblivious.ChainParamsRequest.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -111,10 +110,6 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.deserializeBinaryFromReader
     case 1:
       var value = /** @type {string} */ (reader.readString());
       msg.setChainId(value);
-      break;
-    case 2:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setShowInactive(value);
       break;
     default:
       reader.skipField();
@@ -129,9 +124,9 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.deserializeBinaryFromReader
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.serializeBinary = function() {
+proto.penumbra.client.oblivious.ChainParamsRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.penumbra.client.oblivious.ValidatorInfoRequest.serializeBinaryToWriter(this, writer);
+  proto.penumbra.client.oblivious.ChainParamsRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -139,23 +134,16 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.serializeBinary =
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.penumbra.client.oblivious.ValidatorInfoRequest} message
+ * @param {!proto.penumbra.client.oblivious.ChainParamsRequest} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.serializeBinaryToWriter = function(message, writer) {
+proto.penumbra.client.oblivious.ChainParamsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getChainId();
   if (f.length > 0) {
     writer.writeString(
       1,
-      f
-    );
-  }
-  f = message.getShowInactive();
-  if (f) {
-    writer.writeBool(
-      2,
       f
     );
   }
@@ -166,35 +154,17 @@ proto.penumbra.client.oblivious.ValidatorInfoRequest.serializeBinaryToWriter = f
  * optional string chain_id = 1;
  * @return {string}
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.getChainId = function() {
+proto.penumbra.client.oblivious.ChainParamsRequest.prototype.getChainId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
  * @param {string} value
- * @return {!proto.penumbra.client.oblivious.ValidatorInfoRequest} returns this
+ * @return {!proto.penumbra.client.oblivious.ChainParamsRequest} returns this
  */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.setChainId = function(value) {
+proto.penumbra.client.oblivious.ChainParamsRequest.prototype.setChainId = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional bool show_inactive = 2;
- * @return {boolean}
- */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.getShowInactive = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.penumbra.client.oblivious.ValidatorInfoRequest} returns this
- */
-proto.penumbra.client.oblivious.ValidatorInfoRequest.prototype.setShowInactive = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 

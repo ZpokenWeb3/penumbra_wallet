@@ -1,10 +1,10 @@
 import * as jspb from 'google-protobuf'
 
-import * as crypto_pb from '../crypto_pb';
-import * as chain_pb from '../chain_pb';
-import * as dex_pb from '../dex_pb';
-import * as stake_pb from '../stake_pb';
-import * as proofs_pb from '../proofs_pb';
+import * as crypto_pb from './crypto_pb';
+import * as chain_pb from './chain_pb';
+import * as dex_pb from './dex_pb';
+import * as stake_pb from './stake_pb';
+import * as proofs_pb from './proofs_pb';
 
 
 export class BatchSwapOutputDataRequest extends jspb.Message {

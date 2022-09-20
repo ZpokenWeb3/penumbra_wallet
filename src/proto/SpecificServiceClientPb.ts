@@ -13,11 +13,11 @@
 
 import * as grpcWeb from 'grpc-web';
 
-import * as chain_pb from '../chain_pb';
-import * as client_specific_pb from '../client/specific_pb';
-import * as crypto_pb from '../crypto_pb';
-import * as dex_pb from '../dex_pb';
-import * as stake_pb from '../stake_pb';
+import * as chain_pb from './chain_pb';
+import * as specific_pb from './specific_pb';
+import * as crypto_pb from './crypto_pb';
+import * as dex_pb from './dex_pb';
+import * as stake_pb from './stake_pb';
 
 
 export class SpecificQueryClient {
@@ -85,26 +85,26 @@ export class SpecificQueryClient {
   methodDescriptorValidatorStatus = new grpcWeb.MethodDescriptor(
     '/penumbra.client.specific.SpecificQuery/ValidatorStatus',
     grpcWeb.MethodType.UNARY,
-    client_specific_pb.ValidatorStatusRequest,
+    specific_pb.ValidatorStatusRequest,
     stake_pb.ValidatorStatus,
-    (request: client_specific_pb.ValidatorStatusRequest) => {
+    (request: specific_pb.ValidatorStatusRequest) => {
       return request.serializeBinary();
     },
     stake_pb.ValidatorStatus.deserializeBinary
   );
 
   validatorStatus(
-    request: client_specific_pb.ValidatorStatusRequest,
+    request: specific_pb.ValidatorStatusRequest,
     metadata: grpcWeb.Metadata | null): Promise<stake_pb.ValidatorStatus>;
 
   validatorStatus(
-    request: client_specific_pb.ValidatorStatusRequest,
+    request: specific_pb.ValidatorStatusRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: stake_pb.ValidatorStatus) => void): grpcWeb.ClientReadableStream<stake_pb.ValidatorStatus>;
 
   validatorStatus(
-    request: client_specific_pb.ValidatorStatusRequest,
+    request: specific_pb.ValidatorStatusRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: stake_pb.ValidatorStatus) => void) {
@@ -171,26 +171,26 @@ export class SpecificQueryClient {
   methodDescriptorBatchSwapOutputData = new grpcWeb.MethodDescriptor(
     '/penumbra.client.specific.SpecificQuery/BatchSwapOutputData',
     grpcWeb.MethodType.UNARY,
-    client_specific_pb.BatchSwapOutputDataRequest,
+    specific_pb.BatchSwapOutputDataRequest,
     dex_pb.BatchSwapOutputData,
-    (request: client_specific_pb.BatchSwapOutputDataRequest) => {
+    (request: specific_pb.BatchSwapOutputDataRequest) => {
       return request.serializeBinary();
     },
     dex_pb.BatchSwapOutputData.deserializeBinary
   );
 
   batchSwapOutputData(
-    request: client_specific_pb.BatchSwapOutputDataRequest,
+    request: specific_pb.BatchSwapOutputDataRequest,
     metadata: grpcWeb.Metadata | null): Promise<dex_pb.BatchSwapOutputData>;
 
   batchSwapOutputData(
-    request: client_specific_pb.BatchSwapOutputDataRequest,
+    request: specific_pb.BatchSwapOutputDataRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: dex_pb.BatchSwapOutputData) => void): grpcWeb.ClientReadableStream<dex_pb.BatchSwapOutputData>;
 
   batchSwapOutputData(
-    request: client_specific_pb.BatchSwapOutputDataRequest,
+    request: specific_pb.BatchSwapOutputDataRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: dex_pb.BatchSwapOutputData) => void) {
@@ -214,29 +214,29 @@ export class SpecificQueryClient {
   methodDescriptorKeyValue = new grpcWeb.MethodDescriptor(
     '/penumbra.client.specific.SpecificQuery/KeyValue',
     grpcWeb.MethodType.UNARY,
-    client_specific_pb.KeyValueRequest,
-    client_specific_pb.KeyValueResponse,
-    (request: client_specific_pb.KeyValueRequest) => {
+    specific_pb.KeyValueRequest,
+    specific_pb.KeyValueResponse,
+    (request: specific_pb.KeyValueRequest) => {
       return request.serializeBinary();
     },
-    client_specific_pb.KeyValueResponse.deserializeBinary
+    specific_pb.KeyValueResponse.deserializeBinary
   );
 
   keyValue(
-    request: client_specific_pb.KeyValueRequest,
-    metadata: grpcWeb.Metadata | null): Promise<client_specific_pb.KeyValueResponse>;
+    request: specific_pb.KeyValueRequest,
+    metadata: grpcWeb.Metadata | null): Promise<specific_pb.KeyValueResponse>;
 
   keyValue(
-    request: client_specific_pb.KeyValueRequest,
+    request: specific_pb.KeyValueRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: client_specific_pb.KeyValueResponse) => void): grpcWeb.ClientReadableStream<client_specific_pb.KeyValueResponse>;
+               response: specific_pb.KeyValueResponse) => void): grpcWeb.ClientReadableStream<specific_pb.KeyValueResponse>;
 
   keyValue(
-    request: client_specific_pb.KeyValueRequest,
+    request: specific_pb.KeyValueRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: client_specific_pb.KeyValueResponse) => void) {
+               response: specific_pb.KeyValueResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +

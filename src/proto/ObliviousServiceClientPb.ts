@@ -13,9 +13,9 @@
 
 import * as grpcWeb from 'grpc-web';
 
-import * as chain_pb from '../chain_pb';
-import * as client_oblivious_pb from '../client/oblivious_pb';
-import * as stake_pb from '../stake_pb';
+import * as chain_pb from './chain_pb';
+import * as oblivious_pb from './oblivious_pb';
+import * as stake_pb from './stake_pb';
 
 
 export class ObliviousQueryClient {
@@ -40,16 +40,16 @@ export class ObliviousQueryClient {
   methodDescriptorCompactBlockRange = new grpcWeb.MethodDescriptor(
     '/penumbra.client.oblivious.ObliviousQuery/CompactBlockRange',
     grpcWeb.MethodType.SERVER_STREAMING,
-    client_oblivious_pb.CompactBlockRangeRequest,
+    oblivious_pb.CompactBlockRangeRequest,
     chain_pb.CompactBlock,
-    (request: client_oblivious_pb.CompactBlockRangeRequest) => {
+    (request: oblivious_pb.CompactBlockRangeRequest) => {
       return request.serializeBinary();
     },
     chain_pb.CompactBlock.deserializeBinary
   );
 
   compactBlockRange(
-    request: client_oblivious_pb.CompactBlockRangeRequest,
+    request: oblivious_pb.CompactBlockRangeRequest,
     metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<chain_pb.CompactBlock> {
     return this.client_.serverStreaming(
       this.hostname_ +
@@ -62,26 +62,26 @@ export class ObliviousQueryClient {
   methodDescriptorChainParameters = new grpcWeb.MethodDescriptor(
     '/penumbra.client.oblivious.ObliviousQuery/ChainParameters',
     grpcWeb.MethodType.UNARY,
-    client_oblivious_pb.ChainParamsRequest,
+    oblivious_pb.ChainParamsRequest,
     chain_pb.ChainParameters,
-    (request: client_oblivious_pb.ChainParamsRequest) => {
+    (request: oblivious_pb.ChainParamsRequest) => {
       return request.serializeBinary();
     },
     chain_pb.ChainParameters.deserializeBinary
   );
 
   chainParameters(
-    request: client_oblivious_pb.ChainParamsRequest,
+    request: oblivious_pb.ChainParamsRequest,
     metadata: grpcWeb.Metadata | null): Promise<chain_pb.ChainParameters>;
 
   chainParameters(
-    request: client_oblivious_pb.ChainParamsRequest,
+    request: oblivious_pb.ChainParamsRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: chain_pb.ChainParameters) => void): grpcWeb.ClientReadableStream<chain_pb.ChainParameters>;
 
   chainParameters(
-    request: client_oblivious_pb.ChainParamsRequest,
+    request: oblivious_pb.ChainParamsRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: chain_pb.ChainParameters) => void) {
@@ -105,16 +105,16 @@ export class ObliviousQueryClient {
   methodDescriptorValidatorInfo = new grpcWeb.MethodDescriptor(
     '/penumbra.client.oblivious.ObliviousQuery/ValidatorInfo',
     grpcWeb.MethodType.SERVER_STREAMING,
-    client_oblivious_pb.ValidatorInfoRequest,
+    oblivious_pb.ValidatorInfoRequest,
     stake_pb.ValidatorInfo,
-    (request: client_oblivious_pb.ValidatorInfoRequest) => {
+    (request: oblivious_pb.ValidatorInfoRequest) => {
       return request.serializeBinary();
     },
     stake_pb.ValidatorInfo.deserializeBinary
   );
 
   validatorInfo(
-    request: client_oblivious_pb.ValidatorInfoRequest,
+    request: oblivious_pb.ValidatorInfoRequest,
     metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<stake_pb.ValidatorInfo> {
     return this.client_.serverStreaming(
       this.hostname_ +
@@ -127,26 +127,26 @@ export class ObliviousQueryClient {
   methodDescriptorAssetList = new grpcWeb.MethodDescriptor(
     '/penumbra.client.oblivious.ObliviousQuery/AssetList',
     grpcWeb.MethodType.UNARY,
-    client_oblivious_pb.AssetListRequest,
+    oblivious_pb.AssetListRequest,
     chain_pb.KnownAssets,
-    (request: client_oblivious_pb.AssetListRequest) => {
+    (request: oblivious_pb.AssetListRequest) => {
       return request.serializeBinary();
     },
     chain_pb.KnownAssets.deserializeBinary
   );
 
   assetList(
-    request: client_oblivious_pb.AssetListRequest,
+    request: oblivious_pb.AssetListRequest,
     metadata: grpcWeb.Metadata | null): Promise<chain_pb.KnownAssets>;
 
   assetList(
-    request: client_oblivious_pb.AssetListRequest,
+    request: oblivious_pb.AssetListRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: chain_pb.KnownAssets) => void): grpcWeb.ClientReadableStream<chain_pb.KnownAssets>;
 
   assetList(
-    request: client_oblivious_pb.AssetListRequest,
+    request: oblivious_pb.AssetListRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: chain_pb.KnownAssets) => void) {

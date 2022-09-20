@@ -1,8 +1,8 @@
 import * as jspb from 'google-protobuf'
 
-import * as crypto_pb from '../crypto_pb';
-import * as chain_pb from '../chain_pb';
-import * as stake_pb from '../stake_pb';
+import * as crypto_pb from './crypto_pb';
+import * as chain_pb from './chain_pb';
+import * as stake_pb from './stake_pb';
 
 
 export class AssetListRequest extends jspb.Message {
