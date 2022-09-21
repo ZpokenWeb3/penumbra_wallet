@@ -12,6 +12,14 @@ start tendermint
 
 1. tendermint start --home ~/.penumbra/testnet_data/node0/tendermint
 
+# buf generate(https://docs.buf.build/how-to/replace-protoc-with-buf):
+  1. The default buf.yaml configuration files shown above are created with this command: 
+    - buf mod init
+  2.  With this, you can verify that the workspace compiles with this command:
+    - buf build
+  3. With this, you can generate the Go/gRPC client and server stubs with this command:  
+    - npm run buf:generate 
+
 
 dev
 yarn start
