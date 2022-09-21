@@ -18,7 +18,7 @@ start tendermint
   2.  With this, you can verify that the workspace compiles with this command:
     - buf build
   3. With this, you can generate the Go/gRPC client and server stubs with this command:  
-    - npm run buf:generate 
+    - yarn buf:generate 
 
 
 dev

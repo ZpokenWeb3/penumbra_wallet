@@ -1,0 +1,171 @@
+syntax = "proto3";
+package penumbra.stake;
+option go_package = "github.com/penumbra-zone/penumbra/proto/go-proto";
+
+import "crypto.proto";
+
+// Describes a validator's configuration data.
+message Validator {
+  // The validator's identity verification key.
+  crypto.IdentityKey identity_key = 1;
+  // The validator's consensus pubkey for use in Tendermint (Ed25519).
+  bytes consensus_key = 2;
+  // The validator's (human-readable) name.
+  string name = 3;
+  // The validator's website.
+  string website = 4;
+  // The validator's description.
+  string description = 5;
+  // Whether the validator is enabled or not.
+  //
+  // Disabled validators cannot be delegated to, and immediately begin unbonding.
+  bool enabled = 8;
+  // A list of funding streams describing the validator's commission.
+  repeated FundingStream funding_streams = 6;
+  // The sequence number determines which validator data takes priority, and
+  // prevents replay attacks.  The chain only accepts new validator definitions
+  // with increasing sequence numbers.
+  uint32 sequence_number = 7;
+  // The validator's governance key.
+  crypto.GovernanceKey governance_key = 9;
+}
+
+// For storing the list of keys of known validators.
+message ValidatorList {
+  repeated crypto.IdentityKey validator_keys = 1;
+}
+
+// A portion of a validator's commission.
+message FundingStream {
+  // The destination address for the funding stream.
+  string address = 1;
+  // The portion of the staking reward for the entire delegation pool
+  // allocated to this funding stream, specified in basis points.
+  uint32 rate_bps = 2;
+}
+
+// Describes the reward and exchange rates and voting power for a validator in some epoch.
+message RateData {
+  crypto.IdentityKey identity_key = 1;
+  uint64 epoch_index = 2;
+  uint64 validator_reward_rate = 4;
+  uint64 validator_exchange_rate = 5;
+}
+
+// Describes the base reward and exchange rates in some epoch.
+message BaseRateData {
+  uint64 epoch_index = 1;
+  uint64 base_reward_rate = 2;
+  uint64 base_exchange_rate = 3;
+}
+
+// Describes the current state of a validator on-chain
+message ValidatorStatus {
+  crypto.IdentityKey identity_key = 1;
+  ValidatorState state = 2;
+  uint64 voting_power = 3;
+  BondingState bonding_state = 4;
+}
+
+// Describes the unbonding state of a validator's stake pool.
+message BondingState {
+  enum BondingStateEnum {
+    BONDED = 0;
+    UNBONDING = 1;
+    UNBONDED = 2;
+  }
+  BondingStateEnum state = 1;
+  optional uint64 unbonding_epoch = 2;
+}
+
+// Describes the state of a validator
+message ValidatorState {
+  enum ValidatorStateEnum {
+    INACTIVE = 0;
+    ACTIVE = 1;
+    JAILED = 2;
+    TOMBSTONED = 3;
+    DISABLED = 4;
+  }
+  ValidatorStateEnum state = 1;
+}
+
+
+// Combines all validator info into a single packet.
+message ValidatorInfo {
+  Validator validator = 1;
+  ValidatorStatus status = 2;
+  RateData rate_data = 3;
+}
+
+// A transaction action (re)defining a validator.
+message ValidatorDefinition {
+  // The configuration data for the validator.
+  Validator validator = 1;
+  // A signature by the validator's identity key over the validator data.
+  bytes auth_sig = 2;
+}
+
+// A transaction action adding stake to a validator's delegation pool.
+message Delegate {
+  // The identity key of the validator to delegate to.
+  crypto.IdentityKey validator_identity = 1;
+  // The index of the epoch in which this delegation was performed.
+  // The delegation takes effect in the next epoch.
+  uint64 epoch_index = 2;
+  // The delegation amount, in units of unbonded stake.
+  // TODO: use flow aggregation to hide this, replacing it with bytes amount_ciphertext;
+  uint64 unbonded_amount = 3;
+  // The amount of delegation tokens produced by this action.
+  //
+  // This is implied by the validator's exchange rate in the specified epoch
+  // (and should be checked in transaction validation!), but including it allows
+  // stateless verification that the transaction is internally consistent.
+  uint64 delegation_amount = 4;
+}
+
+// A transaction action withdrawing stake from a validator's delegation pool.
+message Undelegate {
+  // The identity key of the validator to undelegate from.
+  crypto.IdentityKey validator_identity = 1;
+  // The index of the epoch in which this undelegation was performed.
+  uint64 epoch_index = 2;
+  // The amount to undelegate, in units of unbonded stake.
+  uint64 unbonded_amount = 3;
+  // The amount of delegation tokens consumed by this action.
+  //
+  // This is implied by the validator's exchange rate in the specified epoch
+  // (and should be checked in transaction validation!), but including it allows
+  // stateless verification that the transaction is internally consistent.
+  uint64 delegation_amount = 4;
+}
+
+// A commission amount to be minted as part of processing the epoch transition.
+message CommissionAmount {
+  uint64 amount = 1;
+  crypto.Address destination = 2;
+}
+
+// A list of commission amounts to be minted as part of processing the epoch transition.
+message CommissionAmounts {
+  repeated CommissionAmount notes = 1;
+}
+
+// A list of pending delegations and undelegations.
+message DelegationChanges {
+  repeated Delegate delegations = 1;
+  repeated Undelegate undelegations = 2;
+}
+
+// Track's a validator's uptime.
+message Uptime {
+  uint64 as_of_block_height = 1;
+  uint32 window_len = 2;
+  bytes bitvec = 3;
+}
+
+// Tracks our view of Tendermint's view of the validator set, so we can keep it
+// from getting confused.
+message CurrentConsensusKeys {
+  repeated crypto.ConsensusKey consensus_keys = 1;
+}

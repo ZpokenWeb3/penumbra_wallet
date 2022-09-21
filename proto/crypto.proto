@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+option go_package = "github.com/penumbra-zone/penumbra/proto/go-proto";
+package penumbra.crypto;
+
+// Specifies fees paid by a transaction.
+message Fee {
+    // The amount of the token used to pay fees.
+    uint64 amount = 1;
+    // If present, the asset ID of the token used to pay fees.
+    // If absent, specifies the staking token implicitly.
+    crypto.AssetId asset_id = 2;
+}
+
+message Address {
+    bytes inner = 1;
+}
+
+message SpendKey {
+    bytes inner = 1;
+}
+
+message SpendVerificationKey {
+    bytes inner = 1;
+}
+
+message FullViewingKey {
+    bytes inner = 1;
+}
+
+message AccountID {
+    bytes inner = 1;
+}
+
+message Diversifier {
+    bytes inner = 1;
+}
+
+message AddressIndex {
+    bytes inner = 1;
+}
+
+message NoteCommitment {
+    bytes inner = 1;
+}
+
+message ValueCommitment {
+    bytes inner = 1;
+}
+
+message AssetId {
+    bytes inner = 1;
+}
+
+message Denom {
+    string denom = 1;
+}
+
+message Value {
+    uint64 amount = 1;
+    AssetId asset_id = 2;
+}
+
+message MerkleRoot {
+    bytes inner = 1;
+}
+
+message Asset {
+  AssetId id = 1;
+  Denom denom = 2;
+}
+
+// A validator's identity key (decaf377-rdsa spendauth verification key).
+message IdentityKey {
+  bytes ik = 1;
+}
+
+// A validator's governance key (decaf377-rdsa spendauth verification key).
+message GovernanceKey {
+  bytes gk = 1;
+}
+
+message ConsensusKey {
+    bytes inner = 1;
+}
+
+message Note {
+    Value value = 1;
+    bytes note_blinding = 2;
+    Address address = 3;
+}
+
+message Nullifier {
+    bytes inner = 1;
+}
+
+message SpendAuthSignature {
+    bytes inner = 1;
+}
+
+message BindingSignature {
+    bytes inner = 1;
+}
+
+// The body of an output description, including only the minimal
+// data required to scan and process the output.
+message NotePayload {
+  // The note commitment for the output note. 32 bytes.
+  NoteCommitment note_commitment = 1;
+  // The encoding of an ephemeral public key. 32 bytes.
+  bytes ephemeral_key = 2;
+  // An encryption of the newly created note.
+  // 132 = 1(type) + 11(d) + 8(amount) + 32(asset_id) + 32(rcm) + 32(pk_d) + 16(MAC) bytes.
+  bytes encrypted_note = 3;
+}
+
+// An authentication path from a note commitment to the root of the note commitment tree.
+message NoteCommitmentProof {
+  NoteCommitment note_commitment = 1;
+  uint64 position = 2;
+  repeated MerklePathChunk auth_path = 3; // always length 24
+}
+
+// A set of 3 sibling hashes in the auth path for some note commitment.
+message MerklePathChunk {
+    bytes sibling_1 = 1;
+    bytes sibling_2 = 2;
+    bytes sibling_3 = 3;
+}
+
+// A clue for use with Fuzzy Message Detection.
+message Clue {
+  bytes inner = 1;
+}
