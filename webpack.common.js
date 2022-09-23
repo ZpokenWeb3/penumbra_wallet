@@ -9,6 +9,7 @@ module.exports = {
     options: path.resolve('src/options/options.tsx'),
     background: path.resolve('src/background/background.ts'),
     contentScript: path.resolve('src/contentScript/contentScript.tsx'),
+    injectStart: path.resolve('src/contentScript/injectStart.js'),
   },
   module: {
     rules: [
@@ -29,7 +30,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin({
-      cleanStaleWebpackAssets: false
+      cleanStaleWebpackAssets: false,
     }),
     new CopyPlugin({
       patterns: [
@@ -50,9 +51,9 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks(chunk){
+      chunks(chunk) {
         return chunk.name !== 'contentScript';
-      }
+      },
     },
   },
 };

@@ -1,11 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-
-const App: React.FC<{}> = () => {
-  return null;
+const s = document.createElement('script');
+s.src = chrome.runtime.getURL('injectStart.js');
+s.onload = function () {
+  (this as any).remove();
 };
-
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = ReactDOM.createRoot(div as HTMLElement);
-root.render(<App />);
+(document.head || document.documentElement).appendChild(s);

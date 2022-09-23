@@ -17,17 +17,32 @@
     "background": {
         "service_worker": "background.js"
     },
-    "content_scripts":[
+    "content_scripts": [
         {
-             "matches": ["http://*/*", "https://*/*"],
-            "js": ["contentScript.js"]
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "contentScript.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "injectStart.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
         }
     ],
     "permissions": [
-            "storage", "tabCapture", "alarms", "notifications"
-    ],
-    "web_accessible_resources" : [{
-   "resources": [ "css/*", "content/*" ],
-   "matches": ["<all_urls>"]
- }]
+        "tabs",
+        "contextMenus",
+        "storage",
+        "activeTab",
+        "scripting"
+    ]
 }
