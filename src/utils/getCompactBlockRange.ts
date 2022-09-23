@@ -1,4 +1,7 @@
-import { createGrpcWebTransport, createPromiseClient } from '@bufbuild/connect-web';
+import {
+  createGrpcWebTransport,
+  createPromiseClient,
+} from '@bufbuild/connect-web';
 import { ObliviousQuery } from '../../gen/client/oblivious_connectweb';
 import { CompactBlockRangeRequest } from '../../gen/client/oblivious_pb';
 
@@ -7,7 +10,6 @@ const transport = createGrpcWebTransport({
 });
 
 const client = createPromiseClient(ObliviousQuery, transport);
-
 
 export const getCompactBlockRange = async () => {
   const compactBlockRangeRequest = new CompactBlockRangeRequest();
