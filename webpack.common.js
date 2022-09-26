@@ -10,6 +10,7 @@ module.exports = {
     background: path.resolve('src/background/background.ts'),
     contentScript: path.resolve('src/contentScript/contentScript.tsx'),
     injectStart: path.resolve('src/contentScript/injectStart.js'),
+    getCompactBlockRange: path.resolve('src/utils/getCompactBlockRange.ts'),
   },
   module: {
     rules: [
