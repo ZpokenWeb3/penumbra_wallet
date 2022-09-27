@@ -32,7 +32,14 @@
         }
     ],
     "web_accessible_resources": [
-        "inpage.js"
+        {
+            "resources": [
+                "inpage.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
     ],
     "permissions": [
         "tabs",

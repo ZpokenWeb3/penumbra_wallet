@@ -1,5 +1,3 @@
-// import { CompactBlockRangeRequest } from '../../gen/client/oblivious_pb';
-
 export const setGlobalProvider = () => {
   class PenumbraInpageProvider {
     public isPenumbra: true;
@@ -7,11 +5,6 @@ export const setGlobalProvider = () => {
     constructor() {
       this.isPenumbra = true;
       this.chainId = null;
-      this.request = this.request.bind(this);
-    }
-
-    request() {
-    //   const compactBlockRangeRequest = new CompactBlockRangeRequest();
     }
   }
 
