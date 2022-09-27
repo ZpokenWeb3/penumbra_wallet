@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@buf/protocolbuffers_js_penumbra-zone_penumbra": "^1.8.4",
     "@bufbuild/connect-web": "^0.2.1",
     "@bufbuild/protobuf": "^0.1.1",
     "moment": "^2.29.4",
