@@ -17,5 +17,4 @@ export const setGlobalProvider = () => {
 
   (window as any).penumbra = proxiedProvider;
   window.dispatchEvent(new Event('penumbra#initialized'));
-  console.log((window as any).penumbra);
 };
