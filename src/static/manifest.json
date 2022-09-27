@@ -31,6 +31,9 @@
             "all_frames": true
         }
     ],
+    "web_accessible_resources": [
+        "inpage.js"
+    ],
     "permissions": [
         "tabs",
         "contextMenus",
