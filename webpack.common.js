@@ -9,8 +9,7 @@ module.exports = {
     options: path.resolve('src/options/options.tsx'),
     background: path.resolve('src/background/background.ts'),
     contentScript: path.resolve('src/contentScript/contentScript.tsx'),
-    injectStart: path.resolve('src/contentScript/injectStart.js'),
-    getCompactBlockRange: path.resolve('src/utils/getCompactBlockRange.ts'),
+    inpage: path.resolve('src/inpage/inpage.js'),
   },
   module: {
     rules: [
@@ -44,7 +43,7 @@ module.exports = {
     ...getHtmlPlugins(['popup', 'options']),
   ],
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js']
   },
   output: {
     filename: '[name].js',

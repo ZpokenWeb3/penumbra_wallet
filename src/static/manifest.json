@@ -20,22 +20,15 @@
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "file://*/*",
+                "http://*/*",
+                "https://*/*"
             ],
             "js": [
                 "contentScript.js"
             ],
-            "run_at": "document_start"
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "injectStart.js"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
+            "run_at": "document_start",
+            "all_frames": true
         }
     ],
     "permissions": [

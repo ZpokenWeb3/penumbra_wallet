@@ -1,24 +1,19 @@
-// const s = document.createElement('script');
-// s.src = chrome.runtime.getURL('injectStart.js');
-// s.onload = function () {
-//   (this as any).remove();
-// };
-// (document.head || document.documentElement).appendChild(s);
+import { extensionApi } from '../utils/extensionApi';
 
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
-import { getCompactBlockRange } from '../utils/getCompactBlockRange';
+injectScript();
 
-const App: React.FC<{}> = () => {
-  useEffect(() => {
-    console.log('asasd');
+function injectScript() {
+  // try {
+    // inject in-page script
+    const s = document.createElement('script');
+    s.src = extensionApi.runtime.getURL('inpage.js');
+    s.onload = function () {
+      (this as any).remove();
+    };
+    console.log(s);
     
-    getCompactBlockRange();
-  }, []);
-
-  return null;
-};
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = ReactDOM.createRoot(div as HTMLElement);
-root.render(<App />);
+    (document.head || document.documentElement).appendChild(s);
+  // } catch (e) {
+  //   console.error('Injection failed.', e);
+  // }
+}
